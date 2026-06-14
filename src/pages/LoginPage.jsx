@@ -1,38 +1,52 @@
 import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import quizImage from '../assets/quiz-logo.png';
 
 export default function LoginPage() {
-  const [username, setUsername] = useState('');
+  const [name, setName] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (username.trim() === '') {
-      alert('Username tidak boleh kosong');
+    if (name.trim() === '') {
+     setError('Please enter your name');
       return;
     }
-    // Simpan username ke localStorage
-    localStorage.setItem('username', username);
-    return <Navigate to="/quiz" />;
+    setError('');
+    localStorage.setItem('name', name);
+    navigate('/quiz');
   };
 
   return (
-    <div>
-      <h1>Login Page</h1>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="username">Username</label>
-        <br />
-        <input
-          type="text"
-          placeholder="Masukkan username"
-          id="username"
-          name="username"
-          value={username}
-          className='border-4 border-gray-300 rounded-md p-2 w-full'
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <br />
-        <button type="submit">Login</button>
-      </form>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-blue-100">
+      <div className="bg-white p-12 rounded-2xl shadow-md flex flex-col items-center">
+        <img src={quizImage} alt="Quiz Logo" className="w-24 h-24 mb-4" />
+        <h1 className="text-3xl font-bold mb-4">Let's Get Started</h1>
+        <p className="text-gray-600 mb-8">Please enter your name to start the quiz</p>
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col"
+        >
+          <input
+            type="text"
+            placeholder="Enter your name"
+            id="name"
+            name="name"
+            value={name}
+
+            className="border-2 border-gray-300 rounded-md p-2 w-80 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={(e) =>{ setName(e.target.value); if(error) setError('');}}
+          />
+          {error && <p className="text-red-500">{error}</p>}
+          <button
+            type="submit"
+            className="bg-blue-500 text-white py-2 px-4 mt-5 rounded-md hover:bg-blue-600"
+          >
+            Start Quiz
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
