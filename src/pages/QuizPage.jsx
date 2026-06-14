@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { fetchQuizQuestions } from '../services/quizApi';
 import QuestionCard from './components/quiz/QuestionCard';
 import QuizHeader from './components/quiz/QuizHeader';
@@ -13,6 +14,7 @@ export default function QuizPage() {
   const [correctCount, setCorrectCount] = useState(0);
   const [incorrectCount, setIncorrectCount] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getQuestions = async () => {
@@ -46,6 +48,19 @@ export default function QuizPage() {
     return () => clearInterval(timerId);
   }, [loading, questions.length, isFinished]);
 
+  useEffect(() => {
+    if (isFinished) {
+      navigate('/result', {
+        state: {
+          correctCount,
+          incorrectCount,
+          totalQuestions: questions.length,
+        },
+        replace: true, 
+      });
+    }
+  }, [isFinished, navigate, correctCount, incorrectCount, questions.length]);
+
   const handleSelect = (option) => {
     console.log('select:', option);
     const currentQ = questions[currentIndex];
@@ -76,35 +91,6 @@ export default function QuizPage() {
     return (
       <div className="flex flex-col min-h-screen bg-blue-100 items-center justify-center">
         <div className="text-2xl font-bold text-red-500">No questions found.</div>
-      </div>
-    );
-  }
-
-  if (isFinished) {
-    return (
-      <div className="flex flex-col min-h-screen bg-blue-100">
-        <QuizHeader timeLeft={timeLeft} />
-        <div className="flex-1 flex flex-col items-center justify-center p-4">
-          <div className="bg-white p-8 md:p-12 rounded-2xl shadow-md flex flex-col items-center w-full max-w-md">
-            <h1 className="text-3xl font-bold mb-6 text-gray-800">Kuis Selesai!</h1>
-            <div className="flex flex-col w-full gap-4 mb-8">
-              <div className="flex justify-between items-center bg-blue-50 p-4 rounded-lg border border-blue-100">
-                <span className="font-semibold text-gray-700">Terjawab:</span>
-                <span className="text-xl font-bold text-blue-600">
-                  {correctCount + incorrectCount} / {questions.length}
-                </span>
-              </div>
-              <div className="flex justify-between items-center bg-green-50 p-4 rounded-lg border border-green-100">
-                <span className="font-semibold text-gray-700">Benar:</span>
-                <span className="text-xl font-bold text-green-600">{correctCount}</span>
-              </div>
-              <div className="flex justify-between items-center bg-red-50 p-4 rounded-lg border border-red-100">
-                <span className="font-semibold text-gray-700">Salah:</span>
-                <span className="text-xl font-bold text-red-600">{incorrectCount}</span>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     );
   }
