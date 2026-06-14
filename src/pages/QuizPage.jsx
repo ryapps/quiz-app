@@ -1,18 +1,21 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchQuizQuestions } from '../services/quizApi';
+import { clearQuizState, getQuizState, saveQuizState } from '../utils/localStorage';
 import QuestionCard from './components/quiz/QuestionCard';
 import QuizHeader from './components/quiz/QuizHeader';
 
-const QUIZ_DURATION = 120; // 2 menit, kamu bisa ubah bebas jumlah detiknya
+const QUIZ_DURATION = 120; 
 
 export default function QuizPage() {
-  const [questions, setQuestions] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [timeLeft, setTimeLeft] = useState(QUIZ_DURATION);
-  const [correctCount, setCorrectCount] = useState(0);
-  const [incorrectCount, setIncorrectCount] = useState(0);
+  const [savedState] = useState(getQuizState);
+
+  const [questions, setQuestions] = useState(savedState?.questions || []);
+  const [currentIndex, setCurrentIndex] = useState(savedState?.currentIndex || 0);
+  const [loading, setLoading] = useState(!savedState?.questions?.length);
+  const [timeLeft, setTimeLeft] = useState(savedState?.timeLeft ?? QUIZ_DURATION);
+  const [correctCount, setCorrectCount] = useState(savedState?.correctCount || 0);
+  const [incorrectCount, setIncorrectCount] = useState(savedState?.incorrectCount || 0);
   const [isFinished, setIsFinished] = useState(false);
   const navigate = useNavigate();
 
@@ -28,7 +31,9 @@ export default function QuizPage() {
       }
     };
 
-    getQuestions();
+    if (questions.length === 0) {
+      getQuestions();
+    }
   }, []);
 
   useEffect(() => {
@@ -49,22 +54,35 @@ export default function QuizPage() {
   }, [loading, questions.length, isFinished]);
 
   useEffect(() => {
+    if (questions.length > 0 && !isFinished) {
+      saveQuizState({
+        questions,
+        currentIndex,
+        timeLeft,
+        correctCount,
+        incorrectCount,
+      });
+    }
+  }, [questions, currentIndex, timeLeft, correctCount, incorrectCount, isFinished]);
+
+  useEffect(() => {
     if (isFinished) {
+      clearQuizState();
       navigate('/result', {
         state: {
           correctCount,
           incorrectCount,
           totalQuestions: questions.length,
         },
-        replace: true, 
+        replace: true,
       });
     }
   }, [isFinished, navigate, correctCount, incorrectCount, questions.length]);
 
   const handleSelect = (option) => {
     console.log('select:', option);
-    const currentQ = questions[currentIndex];
-    const isCorrect = option === currentQ.correctAnswer;
+    const currentQuestion = questions[currentIndex];
+    const isCorrect = option === currentQuestion.correctAnswer;
     const newCorrect = correctCount + (isCorrect ? 1 : 0);
     const newIncorrect = incorrectCount + (isCorrect ? 0 : 1);
 

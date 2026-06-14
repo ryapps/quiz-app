@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import quizImage from '../assets/quiz-logo.png';
+import { getName, getQuizState, clearQuizState } from '../utils/localStorage';
 
 export default function LoginPage() {
   const [name, setName] = useState('');
@@ -14,6 +15,24 @@ export default function LoginPage() {
       return;
     }
     setError('');
+
+    const savedName = getName();
+    const savedState = getQuizState();
+
+    // Cek apakah namanya sama dan ada kuis yang menggantung
+    if (savedName === name && savedState) {
+      const resume = window.confirm(
+        'You have an unfinished quiz. Do you want to resume? Your progress will be lost if you start a new quiz.'
+      );
+      
+      if (!resume) {
+        clearQuizState();
+      }
+    } else if (savedName !== name) {
+      // Jika namanya beda, pastikan kuis dimulai dari awal
+      clearQuizState();
+    }
+
     localStorage.setItem('name', name);
     navigate('/quiz');
   };
