@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
+import { getName } from '../utils/localStorage';
 
 export default function ResultPage() {
   const location = useLocation();
@@ -6,11 +7,13 @@ export default function ResultPage() {
 
   const state = location.state || {};
   const { correctCount = 0, incorrectCount = 0, totalQuestions = 0 } = state;
+  const name = getName();
 
   return (
     <div className="flex flex-col min-h-screen bg-blue-100">
       <div className="flex-1 flex flex-col items-center justify-center p-4">
         <div className="bg-white p-8 md:p-12 rounded-2xl shadow-md flex flex-col items-center w-full max-w-md">
+          <h1 className="text-xl font-semibold text-gray-600 mb-2">Congratulations, {name}!</h1>
           <h1 className="text-3xl font-bold mb-6 text-gray-800">Quiz Done!</h1>
           <div className="flex flex-col w-full gap-4 mb-8">
             <div className="flex justify-between items-center bg-blue-50 p-4 rounded-lg border border-blue-100">

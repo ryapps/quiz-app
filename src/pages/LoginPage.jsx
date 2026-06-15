@@ -19,7 +19,6 @@ export default function LoginPage() {
     const savedName = getName();
     const savedState = getQuizState();
 
-    // Cek apakah namanya sama dan ada kuis yang menggantung
     if (savedName === name && savedState) {
       const resume = window.confirm(
         'You have an unfinished quiz. Do you want to resume? Your progress will be lost if you start a new quiz.'
@@ -29,7 +28,6 @@ export default function LoginPage() {
         clearQuizState();
       }
     } else if (savedName !== name) {
-      // Jika namanya beda, pastikan kuis dimulai dari awal
       clearQuizState();
     }
 
