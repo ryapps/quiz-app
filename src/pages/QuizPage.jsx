@@ -5,7 +5,7 @@ import { clearQuizState, getQuizState, saveQuizState } from '../utils/localStora
 import QuestionCard from './components/quiz/QuestionCard';
 import QuizHeader from './components/quiz/QuizHeader';
 
-const QUIZ_DURATION = 120; 
+const QUIZ_DURATION = 150; 
 
 export default function QuizPage() {
   const [savedState] = useState(getQuizState);

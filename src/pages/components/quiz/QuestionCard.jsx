@@ -3,7 +3,7 @@ export default function QuestionCard({ question, options, onSelectOption, curren
     <div className="w-full max-w-4xl mx-auto mt-4 px-4">
       <div className="relative bg-white rounded-xl shadow-sm p-6 md:p-10 pt-10 md:pt-12 mb-6 border-t-4 border-blue-500 mt-6">
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-full shadow-md text-gray-700 font-bold text-sm md:text-base border border-blue-200 px-6 py-2 whitespace-nowrap">
-          Pertanyaan {currentQuestionIndex + 1} dari {totalQuestions}
+          Question {currentQuestionIndex + 1} of {totalQuestions}
         </div>
         <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-800 leading-relaxed">{question}</h2>
       </div>
